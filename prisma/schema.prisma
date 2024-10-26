@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  password      String
+  name          String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  transactions  Transaction[]
+  habits        Habit[]
+  carbonScore   CarbonScore?
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  amount      Float
+  category    String
+  description String
+  date        DateTime @default(now())
+  carbonImpact Float
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Habit {
+  id          String   @id @default(uuid())
+  type        String
+  frequency   Float
+  impact      Float
+  description String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CarbonScore {
+  id          String   @id @default(uuid())
+  score       Float
+  totalImpact Float
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
